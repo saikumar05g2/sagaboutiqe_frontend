@@ -55,13 +55,22 @@ export default function Navbar({ user, cartCount = 0, onLogout }) {
           </a>
 
           {user && (
-            <Link
-              to="/my-orders"
-              className={`nav-link ${location.pathname === "/my-orders" ? "active" : ""}`}
-              onClick={closeMenu}
-            >
-              My Orders
-            </Link>
+            <>
+              <Link
+                to="/my-orders"
+                className={`nav-link ${location.pathname === "/my-orders" ? "active" : ""}`}
+                onClick={closeMenu}
+              >
+                My Orders
+              </Link>
+              <Link
+                to="/profile"
+                className={`nav-link ${location.pathname === "/login" ? "active" : ""}`}
+                onClick={() => setMenuOpen(false)}
+              >
+                My Profile
+              </Link>
+            </>
           )}
 
           {user?.role === "ADMIN" && (

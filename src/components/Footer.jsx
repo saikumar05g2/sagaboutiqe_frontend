@@ -40,9 +40,35 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Column 3: Contact Details & Google Maps */}
+        {/* Column 3: Legal & Store Policies (Required for Razorpay KYC) */}
         <div>
-          <h4 className="footer-heading">Visit & Contact Us</h4>
+          <h4 className="footer-heading">Policies &amp; Support</h4>
+          <ul className="footer-links">
+            <li>
+              <Link to="/policies#contact">Contact Us</Link>
+            </li>
+            <li>
+              <Link to="/policies#privacy">Privacy Policy</Link>
+            </li>
+            <li>
+              <Link to="/policies#terms">Terms &amp; Conditions</Link>
+            </li>
+            <li>
+              <Link to="/policies#shipping">
+                Shipping &amp; Delivery Policy
+              </Link>
+            </li>
+            <li>
+              <Link to="/policies#refunds">
+                Cancellation &amp; Refund Policy
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* Column 4: Contact Details & Google Maps */}
+        <div>
+          <h4 className="footer-heading">Visit &amp; Contact Us</h4>
           <ul className="contact-list">
             <li className="contact-item">
               <span className="contact-label">Phone / WhatsApp</span>

@@ -52,7 +52,8 @@ body {
   background-color: var(--emerald-primary);
   color: #ffffff;
   border: none;
-  padding: 12px 22px;
+  /* padding: 12px 22px; */
+  padding: 8px 14px;
   border-radius: 6px;
   font-weight: 600;
   font-family: var(--font-sans);

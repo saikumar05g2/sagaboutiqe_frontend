@@ -1,0 +1,224 @@
+.profile-page-wrapper {
+  padding: 24px 0 56px 0;
+}
+
+.profile-header {
+  margin-bottom: 24px;
+}
+
+.profile-header h1 {
+  font-size: 1.85rem;
+  margin: 6px 0;
+  color: var(--text-charcoal);
+}
+
+.profile-header p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.profile-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px;
+}
+
+.profile-card-title {
+  font-size: 1.15rem;
+  margin: 0 0 16px 0;
+  color: var(--emerald-primary);
+}
+
+.profile-card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.profile-card-header-row .profile-card-title {
+  margin-bottom: 0;
+}
+
+.btn-gps-locate {
+  background-color: var(--bg-sand);
+  border: 1px solid var(--border);
+  color: var(--emerald-primary);
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-gps-locate:hover {
+  border-color: var(--emerald-primary);
+}
+
+.input-readonly {
+  background-color: var(--bg-sand) !important;
+  color: var(--text-muted) !important;
+  cursor: not-allowed;
+}
+
+.map-section {
+  margin-bottom: 18px;
+}
+
+.map-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.92rem;
+  margin-bottom: 10px;
+  background-color: var(--bg-ivory);
+}
+
+.map-canvas-box {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.pinned-address-caption {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 8px 0 0 0;
+  line-height: 1.4;
+}
+
+.address-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.profile-loading {
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* Tablet & Mobile Responsiveness */
+@media (max-width: 900px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-card {
+    padding: 16px;
+  }
+
+  .profile-header h1 {
+    font-size: 1.45rem;
+  }
+
+  .address-fields-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .map-search-input,
+  .profile-card input {
+    font-size: 16px;
+  }
+}
+/* Multi-Address List in ProfilePage.css & CartAndGallery.css */
+.saved-addresses-list,
+.cart-address-radio-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.saved-address-card.default-card {
+  border-color: var(--emerald-primary);
+  background-color: var(--bg-ivory);
+}
+
+.saved-addr-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.default-pill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  background-color: var(--gold-accent);
+  color: var(--text-charcoal);
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-left: 6px;
+}
+
+.saved-addr-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.addr-action-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--emerald-primary);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.addr-action-link.delete {
+  color: #b91c1c;
+}
+
+.cart-addr-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background-color: var(--bg-card);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.cart-addr-option.selected {
+  border-color: var(--emerald-primary);
+  background-color: #f4f9f6;
+}
+
+.cart-addr-option input[type="radio"] {
+  margin-top: 4px;
+  accent-color: var(--emerald-primary);
+}
+
+.cart-addr-option-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.cart-addr-option-line {
+  font-size: 0.84rem;
+  color: var(--text-charcoal);
+  line-height: 1.4;
+}

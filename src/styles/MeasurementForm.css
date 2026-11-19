@@ -74,3 +74,31 @@
   outline: none;
   border-color: var(--gold-accent);
 }
+/* =========================================================
+   MEASUREMENT FORM — MOBILE RESPONSIVENESS
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .custom-box {
+    padding: 14px;
+  }
+
+  .unit-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .input-group input,
+  .input-group select,
+  .input-group textarea {
+    font-size: 16px; /* Prevents iOS/Android mobile auto-zoom on focus */
+  }
+}
+
+@media (max-width: 480px) {
+  .measure-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}

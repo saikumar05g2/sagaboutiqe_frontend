@@ -25,7 +25,20 @@ export default function AdminDashboardPage() {
   const [newField, setNewField] = useState({ label: "", genderType: "WOMEN" });
   const [submitting, setSubmitting] = useState(false);
   const fileInputRef = useRef(null);
+  const editFileInputRef = useRef(null);
   const { showSnackbar, confirmModal, promptModal } = useFeedback();
+
+  // Edit Outfit Modal State
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [editForm, setEditForm] = useState({
+    name: "",
+    category: "",
+    basePrice: "",
+    stockQuantity: 0,
+    description: "",
+    images: [],
+  });
+  const [savingEdit, setSavingEdit] = useState(false);
 
   const [stock, setStock] = useState({
     name: "",
@@ -123,6 +136,79 @@ export default function AdminDashboardPage() {
         err.response?.data?.message || "Failed to update stock",
         "error",
       );
+    }
+  };
+
+  const openEditProductModal = (product) => {
+    setEditingProduct(product);
+    setEditForm({
+      name: product.name || "",
+      category: product.category || (categories[0]?.slug ?? ""),
+      basePrice: product.basePrice ?? "",
+      stockQuantity: product.stockQuantity ?? 0,
+      description: product.description || "",
+      images: Array.isArray(product.images) ? [...product.images] : [],
+    });
+  };
+
+  const handleEditImageUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    if (editForm.images.length + files.length > 5) {
+      showSnackbar("Maximum 5 pictures allowed per outfit.", "error");
+      e.target.value = "";
+      return;
+    }
+
+    const compressedImages = await Promise.all(files.map(compressImage));
+    setEditForm((prev) => ({
+      ...prev,
+      images: [...prev.images, ...compressedImages],
+    }));
+    if (editFileInputRef.current) {
+      editFileInputRef.current.value = "";
+    }
+    showSnackbar(`${compressedImages.length} picture(s) added.`, "success");
+  };
+
+  const handleRemoveEditImage = (indexToRemove) => {
+    setEditForm((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, idx) => idx !== indexToRemove),
+    }));
+  };
+
+  const handleSaveProductEdit = async (e) => {
+    e.preventDefault();
+    if (!editingProduct) return;
+
+    if (editForm.images.length === 0) {
+      showSnackbar("Please keep at least 1 outfit picture.", "error");
+      return;
+    }
+
+    setSavingEdit(true);
+    try {
+      await adminApi.updateProductStock(editingProduct.id, {
+        name: editForm.name,
+        category: editForm.category,
+        basePrice: Number(editForm.basePrice),
+        stockQuantity: Number(editForm.stockQuantity),
+        description: editForm.description,
+        images: editForm.images,
+      });
+
+      showSnackbar(`"${editForm.name}" updated successfully!`, "success");
+      setEditingProduct(null);
+      refreshData();
+    } catch (err) {
+      showSnackbar(
+        err.response?.data?.message || "Failed to update outfit.",
+        "error",
+      );
+    } finally {
+      setSavingEdit(false);
     }
   };
 
@@ -399,7 +485,6 @@ export default function AdminDashboardPage() {
               gap: "24px",
             }}
           >
-            {/* Women Tailoring Fields Table */}
             <div>
               <h3 style={{ color: "var(--emerald-primary)" }}>
                 Women Tailoring Fields ({womenFields.length})
@@ -431,7 +516,6 @@ export default function AdminDashboardPage() {
               </table>
             </div>
 
-            {/* Men Tailoring Fields Table */}
             <div>
               <h3 style={{ color: "var(--emerald-primary)" }}>
                 Men Tailoring Fields ({menFields.length})
@@ -560,7 +644,7 @@ export default function AdminDashboardPage() {
               <th>Outfit Name</th>
               <th>Category</th>
               <th>Status</th>
-              <th>Update Stock Quantity</th>
+              <th>Update Stock & Edit Outfit</th>
             </tr>
           </thead>
           <tbody>
@@ -610,6 +694,7 @@ export default function AdminDashboardPage() {
                         display: "flex",
                         gap: "8px",
                         alignItems: "center",
+                        flexWrap: "wrap",
                       }}
                     >
                       <input
@@ -635,6 +720,14 @@ export default function AdminDashboardPage() {
                         onClick={() => handleUpdateStockQty(p)}
                       >
                         Save Stock
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-gold"
+                        style={{ padding: "8px 14px" }}
+                        onClick={() => openEditProductModal(p)}
+                      >
+                        Edit
                       </button>
                     </div>
                   </td>
@@ -904,6 +997,234 @@ export default function AdminDashboardPage() {
             ))}
           </tbody>
         </table>
+      )}
+
+      {/* Edit Outfit Modal */}
+      {editingProduct && (
+        <div
+          onClick={() => setEditingProduct(null)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.55)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1200,
+            padding: "16px",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: "var(--bg-card)",
+              borderRadius: "12px",
+              padding: "22px",
+              width: "100%",
+              maxWidth: "560px",
+              maxHeight: "90vh",
+              overflowY: "auto",
+              boxShadow: "0 12px 32px rgba(0, 0, 0, 0.25)",
+              border: "1px solid var(--border)",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "14px",
+              }}
+            >
+              <h3 style={{ margin: 0, color: "var(--emerald-primary)" }}>
+                Edit Outfit — {editingProduct.name}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setEditingProduct(null)}
+                style={{
+                  background: "none",
+                  border: "none",
+                  fontSize: "1.25rem",
+                  cursor: "pointer",
+                  color: "var(--text-charcoal)",
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveProductEdit}>
+              <div className="input-group">
+                <label>Garment Name *</label>
+                <input
+                  type="text"
+                  value={editForm.name}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, name: e.target.value })
+                  }
+                  required
+                />
+              </div>
+
+              <div className="measure-grid">
+                <div className="input-group">
+                  <label>Category *</label>
+                  <select
+                    value={editForm.category}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, category: e.target.value })
+                    }
+                    required
+                  >
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.slug}>
+                        {cat.name}
+                      </option>
+                    ))}
+                    {editForm.category &&
+                      !categories.some((c) => c.slug === editForm.category) && (
+                        <option value={editForm.category}>
+                          {editForm.category}
+                        </option>
+                      )}
+                  </select>
+                </div>
+
+                <div className="input-group">
+                  <label>Base Price (₹) *</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={editForm.basePrice}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, basePrice: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="input-group">
+                  <label>Stock Quantity *</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={editForm.stockQuantity}
+                    onChange={(e) =>
+                      setEditForm({
+                        ...editForm,
+                        stockQuantity: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="input-group">
+                <label>Outfit Pictures ({editForm.images.length} / 5)</label>
+                {editForm.images.length > 0 && (
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "10px",
+                      flexWrap: "wrap",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    {editForm.images.map((src, idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          position: "relative",
+                          width: "70px",
+                          height: "84px",
+                          borderRadius: "8px",
+                          overflow: "hidden",
+                          border: "1px solid var(--border)",
+                        }}
+                      >
+                        <img
+                          src={src}
+                          alt={`Angle ${idx + 1}`}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveEditImage(idx)}
+                          title="Remove picture"
+                          style={{
+                            position: "absolute",
+                            top: "3px",
+                            right: "3px",
+                            width: "20px",
+                            height: "20px",
+                            borderRadius: "50%",
+                            border: "none",
+                            backgroundColor: "rgba(0, 0, 0, 0.72)",
+                            color: "#FFFFFF",
+                            fontSize: "0.7rem",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {editForm.images.length < 5 && (
+                  <input
+                    ref={editFileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleEditImageUpload}
+                  />
+                )}
+              </div>
+
+              <div className="input-group">
+                <label>Fabric & Detailing Description</label>
+                <textarea
+                  rows="3"
+                  value={editForm.description}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, description: e.target.value })
+                  }
+                  placeholder="Describe fabric, embroidery, lining, and fit..."
+                />
+              </div>
+
+              <div style={{ display: "flex", gap: "10px", marginTop: "14px" }}>
+                <button
+                  type="submit"
+                  className="btn-primary"
+                  disabled={savingEdit}
+                  style={{ flex: 1, padding: "12px" }}
+                >
+                  {savingEdit ? "Saving Changes..." : "Save Outfit Changes"}
+                </button>
+                <button
+                  type="button"
+                  className="btn-modal-cancel"
+                  onClick={() => setEditingProduct(null)}
+                  style={{ padding: "12px 18px" }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

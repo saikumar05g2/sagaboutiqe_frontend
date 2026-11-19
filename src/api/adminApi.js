@@ -9,8 +9,8 @@ export const adminApi = {
   deleteMeasurementField: (fieldId) =>
     apiClient.delete(`/admin/measurement-fields/${fieldId}`),
   addStock: (data) => apiClient.post("/admin/products", data),
-  updateProductStock: (productId, stockQuantity) =>
-    apiClient.patch(`/admin/products/${productId}/stock`, { stockQuantity }),
+  updateProductStock: (productId, products) =>
+    apiClient.patch(`/admin/products/${productId}/stock`, products),
   getAllOrders: () => apiClient.get("/admin/orders"),
   updateOrderStatus: (orderId, status) =>
     apiClient.patch(`/admin/orders/${orderId}/status`, { status }),

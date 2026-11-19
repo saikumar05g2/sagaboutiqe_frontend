@@ -10,6 +10,8 @@ import CartPage from "./pages/CartPage";
 import TrackOrdersPage from "./pages/TrackOrdersPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import LoginPage from "./pages/LoginPage";
+import ProfilePage from "./pages/ProfilePage";
+import PoliciesPage from "./pages/PoliciesPage";
 
 export default function App() {
   const [user, setUser] = useState(() => {
@@ -50,6 +52,24 @@ export default function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage onLogin={setUser} />} />
               <Route
+                path="/profile"
+                element={
+                  user ? (
+                    <ProfilePage
+                      onUserUpdated={(updatedUser) => {
+                        setUser((prev) => ({ ...prev, ...updatedUser }));
+                        localStorage.setItem(
+                          "saga_user",
+                          JSON.stringify({ ...user, ...updatedUser }),
+                        );
+                      }}
+                    />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              <Route
                 path="/customize/:id"
                 element={<CustomizeOrderPage onAddToCart={handleAddToCart} />}
               />
@@ -66,6 +86,7 @@ export default function App() {
               />
               <Route path="/my-orders" element={<TrackOrdersPage />} />
               <Route path="/admin" element={<AdminDashboardPage />} />
+              <Route path="/policies" element={<PoliciesPage />} />
             </Routes>
           </main>
           <Footer />
